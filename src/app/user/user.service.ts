@@ -12,15 +12,26 @@ export class UserService {
   constructor(private httpClient: HttpClient) {}
 
   getUser(userId: number): Observable<User> {
-    return this.httpClient.get<User>(`${environment.apiUrl}/profiles/${userId}`)
-      .pipe(catchError(this.errorHandler));
+    return this.httpClient.get<User>(`${environment.apiUrl}/profiles/${userId}`);
   }
 
-  editUser(user: User) {
-    return this.httpClient.put<User>(
-      `${environment.apiUrl}/profiles/${user.userId}`, user, { headers: new HttpHeaders().set('content-type', 'application/json') }
-    )
-    .pipe(catchError(this.errorHandler));
+  saveUser(user: User): Observable<User | void> {
+
+    if (!user.userId) {
+      return this.httpClient.post<User>(
+        `${environment.apiUrl}/profiles`, user, { headers: new HttpHeaders().set('content-type', 'application/json') }
+      )
+      .pipe(catchError(this.errorHandler));
+
+    } else {
+
+      return this.httpClient.put<void>(
+        `${environment.apiUrl}/profiles/${user.userId}`, user, { headers: new HttpHeaders().set('content-type', 'application/json') }
+      )
+      .pipe(catchError(this.errorHandler));
+
+    }
+
   }
 
   private errorHandler(error: Error): Observable<User> {
