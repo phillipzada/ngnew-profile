@@ -17,6 +17,7 @@ export class UserProfileComponent implements OnInit {
   userForm: FormGroup;
   loading = false;
   saving = false;
+  error$: Observable<string>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -31,13 +32,18 @@ export class UserProfileComponent implements OnInit {
         if (user) {
           this.userForm.patchValue(user);
         }
-        this.loading = false;
       });
 
+    this.store.select(UserSelectors.selectLoading)
+      .subscribe(loading => this.loading = loading);
+
+    this.store.select(UserSelectors.selectSaving)
+      .subscribe(saving => this.saving = saving);
+
+    this.error$ = this.store.select(UserSelectors.selectError);
   }
 
   getUser(userId: number) {
-    this.loading = true;
     this.store.dispatch(new UserActions.GetAction(userId));
   }
 
@@ -64,7 +70,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   onSubmit() {
-    this.saving = true;
     const user = this.prepareUser();
     this.store.dispatch(new UserActions.SaveAction(user));
   }

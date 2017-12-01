@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user.service';
@@ -13,36 +14,37 @@ export class UserEffects {
     getUser$ = this.actions$
         .ofType<UserActions.GetAction>(UserActions.GET_USER)
         .pipe(
-            switchMap((action) => {
-                return this.userService.getUser(action.payload);
-            }),
-            map((user) => {
-                return new UserActions.LoadAction(user);
-            }),
-            catchError((error) => {
-                console.error('USER GET EFFECT', error);
-                return of(new UserActions.LoadAction(null));
-            })
+        switchMap((action) => {
+            return this.userService.getUser(action.payload);
+        }),
+        map((user) => {
+            return new UserActions.LoadAction(user);
+        }),
+        catchError((error: HttpErrorResponse) => {
+            console.error('USER GET EFFECT', error);
+            const message = error.status === 404 ? 'User Not Found' : error.statusText;
+            return of(new UserActions.ErrorAction(message));
+        })
         );
 
     @Effect()
     saveUser$ = this.actions$
         .ofType<UserActions.SaveAction>(UserActions.SAVE_USER)
         .pipe(
-            switchMap((action) => {
-                return this.userService.saveUser(action.payload);
-            }),
-            map((user) => {
-                if (user) {
-                    return new UserActions.LoadAction(user);
-                } else {
-                    return of();
-                }
-            }),
-            catchError((error) => {
-                console.error('USER SAVE EFFECT', error);
+        switchMap((action) => {
+            return this.userService.saveUser(action.payload);
+        }),
+        map((user) => {
+            if (user) {
+                return new UserActions.LoadAction(user);
+            } else {
                 return of();
-            })
+            }
+        }),
+        catchError((error: HttpErrorResponse) => {
+            console.error('USER SAVE EFFECT', error);
+            return of(new UserActions.ErrorAction('Error Saving User: ' + error.statusText));
+        })
         );
 
     constructor(

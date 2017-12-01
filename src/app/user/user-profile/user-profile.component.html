@@ -7,6 +7,12 @@
               (ngSubmit)="onSubmit()"
               novalidate>
 
+            <section class="section" *ngIf="error$ | async; let error">
+                <mat-error>
+                    {{error}}
+                </mat-error>
+            </section>
+            
             <section class="section">
                 <mat-checkbox formControlName="createUser">Create New User</mat-checkbox>
             </section>
