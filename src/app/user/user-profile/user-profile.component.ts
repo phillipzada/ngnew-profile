@@ -1,8 +1,11 @@
+import { Store } from '@ngrx/store';
 import { User } from '../models/user';
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../user.service';
 import { Observable } from 'rxjs/Observable';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as UserActions from '../+state/user.actions';
+import * as UserSelectors from '../+state/user.selectors';
+import { State } from '../models/state';
 
 @Component({
   selector: 'ngp-user-profile',
@@ -16,28 +19,26 @@ export class UserProfileComponent implements OnInit {
   saving = false;
 
   constructor(
-    private userService: UserService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private store: Store<State>
   ) { }
 
   ngOnInit() {
     this.createForm();
 
+    this.store.select(UserSelectors.selectUser)
+      .subscribe(user => {
+        if (user) {
+          this.userForm.patchValue(user);
+        }
+        this.loading = false;
+      });
+
   }
 
   getUser(userId: number) {
     this.loading = true;
-    this.userService.getUser(userId).subscribe(user => {
-      this.userForm.patchValue(user);
-
-    },
-      error => {
-        this.userForm.reset({ createUser: false });
-        this.loading = false;
-      },
-      () => {
-        this.loading = false;
-      });
+    this.store.dispatch(new UserActions.GetAction(userId));
   }
 
   createForm() {
@@ -65,16 +66,7 @@ export class UserProfileComponent implements OnInit {
   onSubmit() {
     this.saving = true;
     const user = this.prepareUser();
-    this.userService.saveUser(user).subscribe(apiUser => {
-      if (apiUser) {
-        let value = {
-          ...apiUser,
-          ...{ createUser: false }
-        };
-        this.userForm.patchValue(value);
-      }
-      this.saving = false;
-    });
+    this.store.dispatch(new UserActions.SaveAction(user));
   }
 
 }

@@ -6,13 +6,20 @@ import { CommonModule } from '@angular/common';
 import { UserRoutingModule } from './user-routing.module';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { UserService } from './user.service';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { userReducer } from './+state/user.reducer';
+import { UserEffects } from './+state/user.effects';
 
 @NgModule({
   imports: [
     CommonModule,
     UserRoutingModule,
     MaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+
+    StoreModule.forRoot({users: userReducer}),
+    EffectsModule.forRoot([UserEffects]),
   ],
   declarations: [UserProfileComponent],
   exports: [UserProfileComponent],
