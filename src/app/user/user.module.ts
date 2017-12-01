@@ -11,6 +11,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { userReducer } from './+state/user.reducer';
 import { UserEffects } from './+state/user.effects';
 
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -20,6 +22,9 @@ import { UserEffects } from './+state/user.effects';
 
     StoreModule.forRoot({users: userReducer}),
     EffectsModule.forRoot([UserEffects]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 30
+    })
   ],
   declarations: [UserProfileComponent],
   exports: [UserProfileComponent],
