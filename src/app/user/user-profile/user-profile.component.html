@@ -1,19 +1,77 @@
-<mat-card *ngIf="(user$ | async); let user; else elseBlock">
-  <div>
-    <label>First Name</label>
-    <span>{{user.firstName}}</span>
+<mat-card *ngIf="!loading; else loadingBlock">
+  <h2>User Profile Edit Form</h2>
+
+  <div class="container">
+
+    <form [formGroup]="userForm"
+          (ngSubmit)="onSubmit()"
+          novalidate>
+
+      <mat-form-field>
+        <input matInput
+               placeholder="First Name"
+               formControlName="firstName">
+
+        <mat-error *ngIf="userForm.get('firstName').hasError('required')">
+          First Name is
+          <strong>required</strong>
+        </mat-error>
+
+      </mat-form-field>
+
+      <mat-form-field>
+
+        <input matInput
+               placeholder="Last Name"
+               formControlName="lastName">
+
+        <mat-error *ngIf="userForm.get('lastName').hasError('required')">
+          Last Name is
+          <strong>required</strong>
+        </mat-error>
+
+      </mat-form-field>
+
+      <mat-form-field>
+
+        <input matInput
+               placeholder="Display Name"
+               formControlName="displayName">
+
+      </mat-form-field>
+
+      <div style="margin-bottom: 1em">
+
+        <button mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="userForm.pristine || saving"
+                class="btn btn-success">Save</button> &nbsp;
+        <button mat-raised-button
+                color="warn"
+                type="reset"
+                (click)="onReset()"
+                [disabled]="userForm.pristine || saving"
+                class="btn btn-danger">Revert</button>
+
+      </div>
+
+
+    </form>
+
   </div>
-  
-  <div>
-    <label>Last Name</label>
-    <span>{{user.lastName}}</span>
-  </div>
-  
-  <div>
-    <label>Display Name</label>
-    <span>{{user.displayName}}</span>
-  </div>
+
+  <p>{{ userForm.value | json }}</p>
+  <p>{{ userForm.status | json }}</p>
+
 </mat-card>
-<ng-template #elseBlock>
-  Loading...
+
+<ng-template #loadingBlock>
+
+  <div class="container">
+
+      <mat-spinner></mat-spinner>
+
+  </div>
+
 </ng-template>
