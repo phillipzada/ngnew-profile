@@ -1,6 +1,7 @@
 import { User } from '../models/user';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../user.service';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'ngp-user-profile',
@@ -9,7 +10,7 @@ import { UserService } from '../user.service';
 })
 export class UserProfileComponent implements OnInit {
 
-  user: User;
+  user$: Observable<User>;
 
   constructor(private userService: UserService) { }
 
@@ -18,8 +19,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   getUser() {
-    this.user = this.userService.getUser();
-    
+    this.user$ = this.userService.getUser();
   }
 
 }
