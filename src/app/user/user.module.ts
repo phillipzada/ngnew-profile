@@ -27,7 +27,6 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     })
   ],
   declarations: [UserProfileComponent],
-  exports: [UserProfileComponent],
   providers: [UserService]
 })
 export class UserModule { }
