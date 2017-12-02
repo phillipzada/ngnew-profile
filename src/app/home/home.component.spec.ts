@@ -1,3 +1,7 @@
+import { MaterialModule } from '../lib/material/material.module';
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { HomeComponent } from './home.component';
 import { HomeService } from './home.service';
 import { of } from 'rxjs/observable/of';
@@ -5,13 +9,22 @@ import { of } from 'rxjs/observable/of';
 describe(`Component: Home Component`, () => {
     let component: HomeComponent = null;
     let homeService: HomeService;
+    let fixture: ComponentFixture<HomeComponent>;
+    let de: DebugElement;
 
     beforeEach(() => {
-        homeService = {
-            getMessage: () => of('REAL MESSAGE')
-        };
+        TestBed.configureTestingModule({
+            declarations: [HomeComponent],
+            imports: [MaterialModule],
+            providers: [
+                HomeService
+            ]
+        });
 
-        component = new HomeComponent(homeService);
+        fixture = TestBed.createComponent(HomeComponent);
+        component = fixture.componentInstance;
+        homeService = TestBed.get(HomeService);
+        de = fixture.debugElement;
     });
 
     it('add 1 + 1', () => {
@@ -29,6 +42,17 @@ describe(`Component: Home Component`, () => {
         component.ngOnInit();
 
         expect(component.message).toEqual('FAKE MESSAGE');
+    });
+
+    it(`should have message bound onto the page`, () => {
+        spyOn(homeService, 'getMessage')
+            .and.returnValue(of('FAKE MESSAGE'));
+
+        fixture.detectChanges();
+
+        const el = de.query(By.css('h1')).nativeElement;
+
+        expect(el.innerText).toEqual('FAKE MESSAGE');
     });
 
 });
