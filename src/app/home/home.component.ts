@@ -1,3 +1,4 @@
+import { HomeService } from './home.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +8,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  message = 'Routing &amp; Lazy Loading Rocks!';
+
+  constructor(private homeService: HomeService) { }
 
   ngOnInit() {
+    this.getMessage();
+  }
+
+  getMessage() {
+    this.homeService.getMessage().subscribe(message => {
+      this.message = message;
+    });
   }
 
 }
