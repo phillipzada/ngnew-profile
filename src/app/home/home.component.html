@@ -1,7 +1,14 @@
 <mat-card style="text-align: center">
 
-  <h1>
-      {{message}}
-  </h1>
+    <h1>
+        {{message}}
+    </h1>
+
+    <button type="button"
+            mat-raised-button
+            color="accent"
+            (click)="getMessage()">
+      Next Message      
+    </button>
 
 </mat-card>
